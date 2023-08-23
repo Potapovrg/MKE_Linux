@@ -9,6 +9,9 @@ set -x
 # Treat undefined environment variables as errors.
 set -u
 
+#echo "dtoverlay=dwc2" | sudo tee -a /boot/orangepiEnv.txt
+
+modprobe dwc2
 modprobe libcomposite
 
 cd /sys/kernel/config/usb_gadget/
@@ -47,7 +50,7 @@ ln -s functions/hid.mouse configs/c.1
 mkdir -p functions/hid.consumer
 echo 0 > functions/hid.consumer/protocol
 echo 0 > functions/hid.consumer/subclass
-echo 4 > functions/hid.consumer/report_length
+echo 8 > functions/hid.consumer/report_length
 echo -ne \\x05\\x0C\\x09\\x01\\xA1\\x01\\x15\\x00\\x25\\xFF\\x19\\x00\\x29\\xFF\\x95\\x04\\x75\\x10\\x81\\x00\\xC0 > functions/hid.consumer/report_desc
 ln -s functions/hid.consumer configs/c.1
 
