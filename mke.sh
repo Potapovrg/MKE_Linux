@@ -61,3 +61,14 @@ ln -s functions/ecm.usb0 configs/c.1
 
 # End functions
 ls /sys/class/udc > UDC
+
+sleep 3
+ifup usb0
+sleep 1
+cd /home/orangepi/
+./S80dnsmasq start
+
+#. /etc/init.d/dnsmasq restart
+iptables -t nat -s 192.168.111.0/24 -A POSTROUTING -j MASQUERADE
+iptables -t nat -A POSTROUTING -j MASQUERADE
+echo 1 > /proc/sys/net/ipv4/ip_forward

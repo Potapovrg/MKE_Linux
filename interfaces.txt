@@ -1,0 +1,108 @@
+usb0      Link encap:Ethernet  HWaddr C0:EA:C3:61:09:79
+          inet addr:192.168.111.1  Bcast:192.168.111.255  Mask:255.255.255.0
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+_______________________________________________________________________
+# cat /etc/network/interfaces
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+
+allow-hotplug usb0
+iface usb0 inet static
+        address 192.168.111.1
+        netmask 255.255.255.0
+        network 192.168.111.0
+        broadcast 192.168.111.255
+_____________________________________________________________________________
+
+apt-get install dnsmasq
+
+dnsmasq.conf
+
+# Only listen to routers' LAN NIC.  Doing so opens up tcp/udp port 53 to localhost and udp port 67 to world:
+interface=usb0
+
+# dnsmasq will open tcp/udp port 53 and udp port 67 to world to help with dynamic interfaces (assigning dynamic IPs).
+# dnsmasq will discard world requests to them, but the paranoid might like to close them and let the kernel handle them.
+bind-interfaces
+
+# Optionally set a domain name
+domain=example.org
+
+# Set default gateway
+dhcp-option=3,0.0.0.0
+
+# Set DNS servers to announce
+dhcp-option=6,0.0.0.0
+
+# If your dnsmasq server is also doing the routing for your network, you can use option 121 to push a static route out.
+# x.x.x.x is the destination LAN, yy is the CIDR notation (usually /24), and z.z.z.z is the host which will do the routing.
+#dhcp-option=121,x.x.x.x/yy,z.z.z.z
+
+# Dynamic range of IPs to make available to LAN PC and the lease time.
+# Ideally set the lease time to 5m only at first to test everything works okay before you set long-lasting records.
+dhcp-range=192.168.111.50,192.168.111.100,12h
+
+
+____________________________________________________
+
+
+# cat /etc/init.d/S99local
+
+#!/bin/sh
+
+cd /root
+./setup-slave.sh
+sleep 3
+ifup usb0
+sleep 1
+/etc/init.d/S80dnsmasq start
+iptables -t nat -s 192.168.111.0/24 -A POSTROUTING -j MASQUERADE
+iptables -t nat -A POSTROUTING -j MASQUERADE
+echo 1 > /proc/sys/net/ipv4/ip_forward
+
+________________________________________________________
+
+# cat /etc/init.d/S80dnsmasq
+#!/bin/sh
+
+DAEMON="dnsmasq"
+PIDFILE="/var/run/$DAEMON.pid"
+
+[ -f /etc/dnsmasq.conf ] || exit 0
+
+case "$1" in
+        start)
+                printf "Starting dnsmasq: "
+                start-stop-daemon -S -p "$PIDFILE" -x "/usr/sbin/$DAEMON" -- \
+                        --pid-file="$PIDFILE"
+                [ $? = 0 ] && echo "OK" || echo "FAIL"
+                ;;
+        stop)
+                printf "Stopping dnsmasq: "
+                start-stop-daemon -K -q -p "$PIDFILE" -x "/usr/sbin/$DAEMON"
+                [ $? = 0 ] && echo "OK" || echo "FAIL"
+                ;;
+        restart|reload)
+                $0 stop
+                $0 start
+                ;;
+        *)
+                echo "Usage: $0 {start|stop|restart}"
+                exit 1
+esac
+
+exit 0
+#
+
+
+
+
+
