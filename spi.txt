@@ -1,0 +1,12 @@
+ Add:
+overlays=spi-spidev
+param_spidev_spi_bus=1
+param_spidev_spi_cs=1
+ to /boot/orangepiEnv.txt
+ 
+ 
+ 
+ #pip3 install spidev
+ sudo apt-get install python3-dev
+ sudo apt-get install python3-spidev
+ 

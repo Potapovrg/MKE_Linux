@@ -54,13 +54,17 @@ echo 8 > functions/hid.consumer/report_length
 echo -ne \\x05\\x0C\\x09\\x01\\xA1\\x01\\x15\\x00\\x25\\xFF\\x19\\x00\\x29\\xFF\\x95\\x04\\x75\\x10\\x81\\x00\\xC0 > functions/hid.consumer/report_desc
 ln -s functions/hid.consumer configs/c.1
 
-mkdir -p functions/ecm.usb0
-echo  "02:70:05:18:ff:78" > functions/ecm.usb0/host_addr
-echo  "02:70:05:18:ff:79" > functions/ecm.usb0/dev_addr
-ln -s functions/ecm.usb0 configs/c.1
+#mkdir -p functions/ecm.usb0
+#echo  "02:70:05:18:ff:78" > functions/ecm.usb0/host_addr
+#echo  "02:70:05:18:ff:79" > functions/ecm.usb0/dev_addr
+#ln -s functions/ecm.usb0 configs/c.1
 
 # End functions
 ls /sys/class/udc > UDC
+
+chmod 777 /dev/hidg0
+chmod 777 /dev/hidg1
+chmod 777 /dev/hidg2
 
 sleep 3
 ifup usb0
@@ -72,3 +76,4 @@ cd /home/orangepi/
 iptables -t nat -s 192.168.111.0/24 -A POSTROUTING -j MASQUERADE
 iptables -t nat -A POSTROUTING -j MASQUERADE
 echo 1 > /proc/sys/net/ipv4/ip_forward
+
