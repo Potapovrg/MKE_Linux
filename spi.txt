@@ -7,6 +7,8 @@ param_spidev_spi_cs=1
  
  
  #pip3 install spidev
+ sudo apt install -y python-pip
+ pip install spidev
  sudo apt-get install python3-dev
  sudo apt-get install python3-spidev
  
