@@ -1,9 +1,9 @@
 import spidev
 
-import OPi.GPIO as GPIO
-GPIO.setmode(GPIO.BOARD)
-GPIO.setwarnings(False)
-GPIO.setup(10, GPIO.OUT)
+#import OPi.GPIO as GPIO
+#GPIO.setmode(GPIO.BOARD)
+#GPIO.setwarnings(False)
+#GPIO.setup(10, GPIO.OUT)
 
 spi = spidev.SpiDev()
 spi.open(1, 1)
@@ -13,7 +13,7 @@ spi.cshigh=True
 spi.bits_per_word=8
 spi.mode=0b00
 
-GPIO.output(10, GPIO.HIGH)
+#GPIO.output(10, GPIO.HIGH)
 txData = [0b00001000,0x00,0,0,0,0b00000000,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,112]
 rxData = spi.xfer(txData)
 #GPIO.output(10, GPIO.LOW)

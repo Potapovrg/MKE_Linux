@@ -1,10 +1,13 @@
-usb0      Link encap:Ethernet  HWaddr C0:EA:C3:61:09:79
-          inet addr:192.168.111.1  Bcast:192.168.111.255  Mask:255.255.255.0
-          UP BROADCAST MULTICAST  MTU:1500  Metric:1
-          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
-          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
-          collisions:0 txqueuelen:1000
-          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+orangepi@oranifconip link sudo vi /etc/systemd/network/10-eth0.link
+[sudo] password for orangepi:
+[Match]
+MACAddress=02:70:05:18:ff:79
+
+[Link]
+Name=eth0
+
+
 
 _______________________________________________________________________
 cat /etc/rc.local
