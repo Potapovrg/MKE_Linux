@@ -1,0 +1,9 @@
+User: root
+Password: root
+
+Запустить трансляцию потокового видео:
+
+media-ctl --set-v4l2 '"ov2640 0-0030":0[fmt:YUYV8_2X8/1600x1200]' #Подключить камеру
+media-ctl --set-v4l2 '"ov5640 0-003c":0[fmt:UYVY8_2X8/1600x1200]'
+
+ffmpeg -y -f v4l2 -video_size 1600x1200 -r 1 -i /dev/video0 -frames:v 10 /root/output%d.jpg #нужно сделать несколько кадров, чтобы настроить автоэкспозицию
