@@ -1,9 +1,44 @@
 User: root
 Password: root
 
-Запустить трансляцию потокового видео:
+Команда инициализация HID устройсва:
+./setup-slave.sh
 
+Переключение режимов 
+./adb.sh 
+./otg.sh
+
+Структуры данных такие же как были при работе с STM32 через SPI
+typedef struct
+{
+	uint8_t button;
+	int8_t mouse_x;
+	int8_t mouse_y;
+	int8_t wheel;
+} mouseHID;
+
+typedef struct
+{
+	uint8_t MODIFIER;
+	uint8_t RESERVED;
+	uint8_t KEYCODE1;
+	uint8_t KEYCODE2;
+	uint8_t KEYCODE3;
+	uint8_t KEYCODE4;
+	uint8_t KEYCODE5;
+	uint8_t KEYCODE6;
+} keyboardHID;
+
+
+
+Скрипт для проверки мышки, пример работы с hid устройствами под Linux
+mouse.py
+
+
+
+Получить картинку с камеры, для этого последовательно отправляем 2 команды:
 media-ctl --set-v4l2 '"ov2640 0-0030":0[fmt:YUYV8_2X8/1600x1200]' #Подключить камеру
-media-ctl --set-v4l2 '"ov5640 0-003c":0[fmt:UYVY8_2X8/1600x1200]'
+media-ctl --set-v4l2 '"ov5640 0-003c":0[fmt:UYVY8_2X8/1600x1200]' #Пока не работает)
 
 ffmpeg -y -f v4l2 -video_size 1600x1200 -r 1 -i /dev/video0 -frames:v 10 /root/output%d.jpg #нужно сделать несколько кадров, чтобы настроить автоэкспозицию
+
